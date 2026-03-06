@@ -3,8 +3,6 @@ The standard AI algorithm of easyAI is Negamax with alpha-beta pruning
 and (optionnally), transposition tables.
 """
 
-import pickle
-
 LOWERBOUND, EXACT, UPPERBOUND = -1, 0, 1
 inf = float("infinity")
 
@@ -57,7 +55,6 @@ def negamax(game, depth, origDepth, scoring, alpha=+inf, beta=-inf, tt=None):
         possible_moves = [lookup["move"]] + possible_moves
 
     else:
-
         possible_moves = game.possible_moves()
 
     state = game
@@ -69,7 +66,6 @@ def negamax(game, depth, origDepth, scoring, alpha=+inf, beta=-inf, tt=None):
     unmake_move = hasattr(state, "unmake_move")
 
     for move in possible_moves:
-
         if not unmake_move:
             game = state.copy()  # re-initialize move
 
@@ -96,7 +92,6 @@ def negamax(game, depth, origDepth, scoring, alpha=+inf, beta=-inf, tt=None):
                 break
 
     if tt is not None:
-
         assert best_move in possible_moves
         tt.store(
             game=state,

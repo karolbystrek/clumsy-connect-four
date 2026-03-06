@@ -26,7 +26,7 @@ class ConnectFour(TwoPlayerGame):
     def possible_moves(self):
         return [i for i in range(7) if (self.board[:, i].min() == 0)]
 
-    def play(self, nmoves=1000, verbose=True):
+    def play(self, nmoves=1000, verbose=False):
         from copy import deepcopy
         history = []
 
@@ -39,9 +39,7 @@ class ConnectFour(TwoPlayerGame):
 
             move = self.player.ask_move(self)
             history.append((deepcopy(self), move))
-            
-            actual_move = self.slip_move(move)
-            self.make_move(actual_move)
+            actual_move = self.make_move(move)
 
             if verbose:
                 print(
@@ -56,10 +54,12 @@ class ConnectFour(TwoPlayerGame):
         return history
 
     def make_move(self, column):
-        line = np.argmin(self.board[:, column] != 0)
-        self.board[line, column] = self.current_player
+        move = self.slip(column)
+        line = np.argmin(self.board[:, move] != 0)
+        self.board[line, move] = self.current_player
+        return move
     
-    def slip_move(self, column):
+    def slip(self, column):
         if np.random.random() < self.slip_probability:
             adjacent = []
             if column > 0:
@@ -70,7 +70,7 @@ class ConnectFour(TwoPlayerGame):
             valid_adjacent = [c for c in adjacent if self.board[:, c].min() == 0]
             
             if valid_adjacent:
-                print("Slip!")
+                # print("Slip!")
                 return np.random.choice(valid_adjacent)
         return column
 

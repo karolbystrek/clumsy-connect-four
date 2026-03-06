@@ -13,8 +13,9 @@ class ConnectFour(TwoPlayerGame):
     http://en.wikipedia.org/wiki/Connect_Four
     """
 
-    def __init__(self, players, board=None):
+    def __init__(self, players, board=None, slip_probability=0.0):
         self.players = players
+        self.slip_probability = slip_probability
         self.board = (
             board
             if (board is not None)
@@ -25,9 +26,53 @@ class ConnectFour(TwoPlayerGame):
     def possible_moves(self):
         return [i for i in range(7) if (self.board[:, i].min() == 0)]
 
+    def play(self, nmoves=1000, verbose=True):
+        from copy import deepcopy
+        history = []
+
+        if verbose:
+            self.show()
+
+        for self.nmove in range(1, nmoves + 1):
+            if self.is_over():
+                break
+
+            move = self.player.ask_move(self)
+            history.append((deepcopy(self), move))
+            
+            actual_move = self.slip_move(move)
+            self.make_move(actual_move)
+
+            if verbose:
+                print(
+                    "\nMove #%d: player %d plays %s :"
+                    % (self.nmove, self.current_player, str(actual_move))
+                )
+                self.show()
+
+            self.switch_player()
+
+        history.append(deepcopy(self))
+        return history
+
     def make_move(self, column):
         line = np.argmin(self.board[:, column] != 0)
         self.board[line, column] = self.current_player
+    
+    def slip_move(self, column):
+        if np.random.random() < self.slip_probability:
+            adjacent = []
+            if column > 0:
+                adjacent.append(column - 1)
+            if column < 6:
+                adjacent.append(column + 1)
+            
+            valid_adjacent = [c for c in adjacent if self.board[:, c].min() == 0]
+            
+            if valid_adjacent:
+                print("Slip!")
+                return np.random.choice(valid_adjacent)
+        return column
 
     def show(self):
         print(
@@ -77,17 +122,3 @@ POS_DIR = np.array(
     + [[[i, 6], [1, -1]] for i in range(1, 3)]
     + [[[0, i], [1, -1]] for i in range(3, 7)]
 )
-
-if __name__ == "__main__":
-    # LET'S PLAY !
-
-    from easyAI import AI_Player, Negamax, SSS
-
-    ai_algo_neg = Negamax(5)
-    ai_algo_sss = SSS(5)
-    game = ConnectFour([AI_Player(ai_algo_neg), AI_Player(ai_algo_sss)])
-    game.play()
-    if game.lose():
-        print("Player %d wins." % (game.opponent_index))
-    else:
-        print("Looks like we have a draw.")

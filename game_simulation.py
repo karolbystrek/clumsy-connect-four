@@ -8,7 +8,6 @@ from easyAI import AI_Player
 
 
 class GameSimulation:
-
     def __init__(
         self,
         algo_player_1,
@@ -25,11 +24,24 @@ class GameSimulation:
         self.output_name = output_name
         self.output_dir = output_dir
 
+    def _get_algo_info(self, algo):
+        name = algo.__class__.__name__
+        params = []
+        if hasattr(algo, "depth"):
+            params.append(f"depth={algo.depth}")
+        if hasattr(algo, "use_pruning"):
+            params.append(f"pruning={algo.use_pruning}")
+        return f"{name}({', '.join(params)})"
+
     def run(self):
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        algo_1_info = self._get_algo_info(self.algo_player_1)
+        algo_2_info = self._get_algo_info(self.algo_player_2)
         configurations = []
 
         print(f"Running simulation: {self.output_name}")
+        print(f"Player 1: {algo_1_info}")
+        print(f"Player 2: {algo_2_info}")
         print(f"Matches per variant: {self.num_matches}")
 
         for variant_name, slip_prob in self.variants:
@@ -49,6 +61,8 @@ class GameSimulation:
         all_results = {
             "timestamp": timestamp,
             "num_matches": self.num_matches,
+            "player_1_algo": algo_1_info,
+            "player_2_algo": algo_2_info,
             "configurations": configurations,
         }
 
@@ -109,9 +123,10 @@ class GameSimulation:
         print(f"{'=' * 60}")
 
     def _save_results(self, all_results, timestamp):
-        os.makedirs(self.output_dir, exist_ok=True)
-        filename = f"{self.output_name}_{timestamp}.json"
-        filepath = os.path.join(self.output_dir, filename)
+        target_dir = os.path.join(self.output_dir, self.output_name)
+        os.makedirs(target_dir, exist_ok=True)
+        filename = f"{timestamp}.json"
+        filepath = os.path.join(target_dir, filename)
 
         with open(filepath, "w") as f:
             json.dump(all_results, f, indent=2)

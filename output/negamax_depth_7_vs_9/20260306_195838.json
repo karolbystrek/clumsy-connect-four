@@ -1,0 +1,30 @@
+{
+  "timestamp": "20260306_195838",
+  "num_matches": 20,
+  "player_1_algo": "Negamax(depth=7, pruning=True)",
+  "player_2_algo": "Negamax(depth=9, pruning=True)",
+  "configurations": [
+    {
+      "variant": "deterministic",
+      "slip_probability": 0.0,
+      "results": {
+        "player_1_wins": 10,
+        "player_2_wins": 10,
+        "draws": 0,
+        "avg_move_time_player_1": 0.3745359066657425,
+        "avg_move_time_player_2": 3.1071575395606295
+      }
+    },
+    {
+      "variant": "probabilistic",
+      "slip_probability": 0.1,
+      "results": {
+        "player_1_wins": 6,
+        "player_2_wins": 12,
+        "draws": 2,
+        "avg_move_time_player_1": 0.6290136770808222,
+        "avg_move_time_player_2": 5.072435703191422
+      }
+    }
+  ]
+}

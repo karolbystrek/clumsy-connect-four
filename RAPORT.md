@@ -6,7 +6,6 @@
 |---|---|---|
 | **Imię i nazwisko** | Karol Bystrek| Patryk Chamera |
 | **E-mail** | karbystrek@student.agh.edu.pl | pchamera@student.agh.edu.pl |
-| **Numer indeksu** | TODO | 420201 |
 
 ---
 

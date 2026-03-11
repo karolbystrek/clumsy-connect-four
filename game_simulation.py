@@ -31,6 +31,8 @@ class GameSimulation:
             params.append(f"depth={algo.depth}")
         if hasattr(algo, "use_pruning"):
             params.append(f"pruning={algo.use_pruning}")
+        if hasattr(algo, "slip_probability"):
+            params.append(f"slip={algo.slip_probability}")
         return f"{name}({', '.join(params)})"
 
     def run(self):

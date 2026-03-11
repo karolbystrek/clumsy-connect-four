@@ -12,6 +12,7 @@ __all__ = [
     "DUAL",
     "HashTranspositionTable",
     "DictTranspositionTable",
+    "ExpectiMinimax",
 ]
 
 from .TwoPlayerGame import TwoPlayerGame
@@ -27,4 +28,5 @@ from .AI import (
     DUAL,
     HashTranspositionTable,
     DictTranspositionTable,
+    ExpectiMinimax,
 )

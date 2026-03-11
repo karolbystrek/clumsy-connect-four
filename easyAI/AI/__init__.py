@@ -6,3 +6,4 @@ from .MTdriver import mtd
 from .SSS import SSS
 from .DUAL import DUAL
 from .HashTranspositionTable import HashTranspositionTable
+from .ExpectiMinimax import ExpectiMinimax

@@ -98,7 +98,7 @@ W tej sekcji opisujemy eksperymenty, w których dwóch graczy AI z algorytmem **
 
 ### 2.3. Napotkane problemy
 
-#TODO
+Jedynym istotnym wyzwaniem podczas przeprowadzania badań był **bardzo długi czas obliczeń** wymagany dla niektórych konfiguracji eksperymentalnych. Problem ten występował szczególnie w przypadku algorytmu **Negamax bez odcięcia alfa-beta** przy większych głębokościach (np. dla głębokości 7 średni czas ruchu przekraczał 50 sekund, co wymusiło ograniczenie liczby meczów w tej serii). Dodatkowo, wprowadzenie mechanizmu *slip* (wariantu probabilistycznego) każdorazowo wydłużało czas generowania ruchu o ok. 30–50% w porównaniu do wariantu deterministycznego, co przy kumulacji wielu partii znacząco wpływało na całkowity czas trwania symulacji.
 
 ---
 

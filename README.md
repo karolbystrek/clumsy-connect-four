@@ -215,3 +215,70 @@ W tej sekcji porównujemy algorytm Negamax z odcięciem alfa-beta (`pruning=True
 4. **Zwiększenie głębokości** z 7 do 9 zwiększa czas ruchu ok. 5–8× (z ~0.4 s do ~3.0 s z alfa-beta).
 
 ---
+
+## 4. Algorytm ExpectiMinimax z odcięciem alfa-beta
+
+W tej sekcji porównujemy algorytm **ExpectiMinimax** (z odcięciem alfa-beta, uwzględniający prawdopodobieństwo slip) z algorytmem **Negamax** (z odcięciem alfa-beta) dla dwóch ustawień głębokości (3 i 5) na wariantach deterministycznym i probabilistycznym. ExpectiMinimax, w odróżnieniu od Negamaxa, modeluje losowe węzły w drzewie gry odpowiadające mechanizmowi slip, co pozwala mu podejmować decyzje uwzględniające prawdopodobieństwo ześlizgnięcia żetonu.
+
+### 4.1. ExpectiMinimax vs Negamax – głębokość 3
+
+>  `output/expectiminimax_vs_negamax_d3/20260315_212813.json`
+
+**Konfiguracja:**
+- Gracz 1: ExpectiMinimax (depth=3, pruning=True, slip=0.1)
+- Gracz 2: Negamax (depth=3, pruning=True)
+- Liczba meczów: 20
+
+**Wyniki – wariant deterministyczny** (slip = 0.0):
+
+| | Gracz 1 (ExpectiMinimax) | Gracz 2 (Negamax) |
+|---|:---:|:---:|
+| **Zwycięstwa** | 10 | 10 |
+| **Remisy** | 0 | 0 |
+| **Śr. czas ruchu** | 0.006 s | 0.007 s |
+
+**Wyniki – wariant probabilistyczny** (slip = 0.1):
+
+| | Gracz 1 (ExpectiMinimax) | Gracz 2 (Negamax) |
+|---|:---:|:---:|
+| **Zwycięstwa** | 12 | 8 |
+| **Remisy** | 0 | 0 |
+| **Śr. czas ruchu** | 0.115 s | 0.012 s |
+
+**Obserwacje:** W wariancie deterministycznym oba algorytmy osiągają identyczny wynik (10:10), co jest oczekiwane – bez slipu ExpectiMinimax zachowuje się analogicznie do Negamaxa. W wariancie probabilistycznym ExpectiMinimax uzyskuje przewagę **12:8**, co pokazuje, że nawet przy płytkiej głębokości (d=3) modelowanie węzłów losowych daje lepsze decyzje niż ignorowanie mechanizmu slip. Warto zauważyć, że ExpectiMinimax jest ok. **10× wolniejszy** niż Negamax w wariancie probabilistycznym (0.115 s vs 0.012 s), co wynika z konieczności ewaluacji dodatkowych gałęzi odpowiadających różnym scenariuszom slip.
+
+### 4.2. ExpectiMinimax vs Negamax – głębokość 5
+
+>  `output/expectiminimax_vs_negamax_d5/20260311_095823.json`
+
+**Konfiguracja:**
+- Gracz 1: ExpectiMinimax (depth=5, pruning=True, slip=0.1)
+- Gracz 2: Negamax (depth=5, pruning=True)
+- Liczba meczów: 20
+
+**Wyniki – wariant deterministyczny** (slip = 0.0):
+
+| | Gracz 1 (ExpectiMinimax) | Gracz 2 (Negamax) |
+|---|:---:|:---:|
+| **Zwycięstwa** | 10 | 10 |
+| **Remisy** | 0 | 0 |
+| **Śr. czas ruchu** | 0.032 s | 0.037 s |
+
+**Wyniki – wariant probabilistyczny** (slip = 0.1):
+
+| | Gracz 1 (ExpectiMinimax) | Gracz 2 (Negamax) |
+|---|:---:|:---:|
+| **Zwycięstwa** | 15 | 5 |
+| **Remisy** | 0 | 0 |
+| **Śr. czas ruchu** | 11.175 s | 0.084 s |
+
+**Obserwacje:** Przy głębokości 5 przewaga ExpectiMinimax w wariancie probabilistycznym jest jeszcze bardziej wyraźna – **15:5** na korzyść ExpectiMinimax. Algorytm ten, dzięki głębszemu modelowaniu stochastycznych rozgałęzień, podejmuje znacząco lepsze decyzje niż Negamax, który traktuje grę jako w pełni deterministyczną. Jednakże koszt obliczeniowy jest bardzo wysoki – ExpectiMinimax potrzebuje średnio **11.175 s** na ruch w wariancie probabilistycznym, wobec zaledwie **0.084 s** dla Negamaxa (przyspieszenie Negamaxa rzędu **133×**). W wariancie deterministycznym oba algorytmy ponownie osiągają identyczny wynik (10:10) z porównywalnymi czasami (~0.03 s).
+
+### 4.3. Wnioski – ExpectiMinimax
+
+1. **ExpectiMinimax jest skuteczniejszy w wariancie probabilistycznym.** Algorytm ten, uwzględniając węzły losowe w drzewie gry, podejmuje lepsze decyzje niż standardowy Negamax – przewaga rośnie wraz z głębokością (12:8 przy d=3 → 15:5 przy d=5).
+2. **Koszt obliczeniowy jest znacząco wyższy.** ExpectiMinimax musi ewaluować dodatkowe gałęzie odpowiadające scenariuszom slip (lewo, prawo, brak slipu), co wykładniczo zwiększa liczbę odwiedzanych węzłów. Przy głębokości 5 jest ok. **133× wolniejszy** od Negamaxa w wariancie probabilistycznym.
+3. **W wariancie deterministycznym oba algorytmy są równoważne** – ExpectiMinimax nie wnosi żadnej przewagi, gdy slip nie występuje, ponieważ węzły losowe mają zerowe prawdopodobieństwo.
+4. **Kompromis jakość–czas:** ExpectiMinimax przy niskiej głębokości (d=3, ~0.115 s/ruch) oferuje rozsądny kompromis między jakością decyzji a czasem obliczeń. Przy głębokości 5 czas ruchu (~11 s) staje się problematyczny dla zastosowań interakcyjnych, choć jakość decyzji jest najlepsza spośród testowanych konfiguracji.
+
+---
